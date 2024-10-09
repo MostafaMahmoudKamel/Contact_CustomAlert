@@ -1,4 +1,3 @@
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -37,8 +36,10 @@ fun UpdateCustomAlert(
     indexOf: MutableState<Int>,
     contact: Contact,
     contacts: SnapshotStateList<Contact>,
-    modifier: Modifier = Modifier
-) {
+    modifier: Modifier = Modifier,
+
+
+    ) {
 
     var nameState = remember { mutableStateOf(contact.name) }
     var phoneState = remember { mutableStateOf(contact.phone) }
@@ -52,11 +53,10 @@ fun UpdateCustomAlert(
 
     Box(
         modifier = Modifier
-            .then(modifier)
+            .then(modifier)//                .align(Alignment.Center) //from parent
             .height(450.dp)
             .width(300.dp)
             .background(Color.White, RoundedCornerShape(10.dp))
-//                .align(Alignment.Center) //from parent
             .clip(RoundedCornerShape(10.dp))
     ) {
         Column(
@@ -99,17 +99,17 @@ fun UpdateCustomAlert(
                 }) { Text("Cancel") }
 
                 Button(onClick = {
-                    Log.i("Alert", "${indexOf.value}")
-                    contacts[indexOf.value] = Contact(
-                        nameState.value,
-                        phoneState.value,
-                        addressState.value,
-                        emailState.value
-                    )
+                    if(!errorEmail.value&&!errorPhone.value&&!errorName.value) {
+                        contacts[indexOf.value] =
+                            Contact(
+                                nameState.value,
+                                phoneState.value,
+                                addressState.value,
+                                emailState.value
+                            )
+                        visibleUpdateAlert.value = false
 
-
-                    visibleUpdateAlert.value = false
-//                    }
+                    }
 
                 })
                 { Text("Confirm") }
@@ -123,9 +123,10 @@ fun UpdateCustomAlert(
                         visibleUpdateAlert.value = false
 
                     })
-//
+
             }
         }
 
     }
 }
+

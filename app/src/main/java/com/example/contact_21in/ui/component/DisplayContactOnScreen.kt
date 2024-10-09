@@ -22,13 +22,12 @@ import com.example.contact_21in.ui.model.Contact
 
 
 @Composable
-fun DisplayContactOnScreen(showState: MutableState<Boolean>,
-                           updatevisibleAlert:MutableState<Boolean>,
-                           contact: Contact) {
+fun DisplayContactOnScreen(
+    contact: Contact,
+    onClick: () -> Unit
+) {
     Card(
-        modifier = Modifier.fillMaxWidth().clickable {
-//            updatevisibleAlert.value=true
-        }
+        modifier = Modifier.fillMaxWidth()
     ) {
 
         Row(
@@ -36,10 +35,8 @@ fun DisplayContactOnScreen(showState: MutableState<Boolean>,
                 .padding(16.dp)
                 .fillMaxWidth()
                 .background(Color.Red)
-                .clickable { updatevisibleAlert.value=true;
-                           }
-//                .clickable { showState.value = true },
-            ,horizontalArrangement = Arrangement.SpaceAround
+                .clickable { onClick() },
+            horizontalArrangement = Arrangement.SpaceAround
         ) {
             Image(
                 painter = painterResource(R.drawable.desha2),
