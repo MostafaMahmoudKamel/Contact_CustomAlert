@@ -1,6 +1,7 @@
 package com.example.contact_21in
 
 import UpdateCustomAlert
+import android.annotation.SuppressLint
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -13,9 +14,12 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
@@ -42,6 +46,8 @@ class MainActivity : ComponentActivity() {
 }
 
 
+@OptIn(ExperimentalMaterial3Api::class)
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun ContactScreen() {
     //state variable to control add/update
@@ -51,63 +57,86 @@ fun ContactScreen() {
     var contacts = remember { mutableStateListOf<Contact>() }//allcontact
 
 
-    Box(
-        Modifier
-            .padding(32.dp)
-            .fillMaxSize()
-    ) {
-        //title
-        Text(
-            "Contact List Application",
-            fontWeight = FontWeight.Bold
-        )
-
-        // Display contacts or a message if the list is empty
-        Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
-
-            if (contacts.isEmpty()) {
-                Text("please click +", Modifier.padding(32.dp))
-            } else {
-                contacts.forEachIndexed { index, contact ->
-                    DisplayContactOnScreen(contact = contact) {
-                        // Show update alert when a contact is clicked
-                        visibleCustomAlertUpdated.value = true
-                        selectedContactIndex.value = index
-                    }
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = {
+                    //title
+                    Text(
+                        "Contact List Application",
+                        fontWeight = FontWeight.Bold
+                    )
                 }
+            )
+
+        },
+        floatingActionButton = {
+            //add new contact
+            FloatingActionButton(
+                onClick = { visibleCustomAlert.value = true },//show add contact dailog
+                modifier = Modifier
+                    .padding(32.dp)
+//                    .align(Alignment.BottomEnd)
+            ) {
+                Icon(imageVector = Icons.Default.Add, contentDescription = null)
             }
         }
 
-        //add new contact
-        FloatingActionButton(
-            onClick = { visibleCustomAlert.value = true },//show add contact dailog
-            modifier = Modifier
-                .padding(32.dp)
-                .align(Alignment.BottomEnd)
+        ) {innerPadding->
+        Box(
+            Modifier
+                .padding(innerPadding)
+                .fillMaxSize()
         ) {
-            Icon(imageVector = Icons.Default.Add, contentDescription = null)
-        }
 
-          // CustomAlert for adding a new contact
-        CustomAlert(
-            visibleCustomAlert,
-            contacts = contacts,
-            modifier = Modifier.align(Alignment.Center),
-            onCancel = { visibleCustomAlert.value = false; }
-        )
 
-        if (visibleCustomAlertUpdated.value) {
-            UpdateCustomAlert(
-                visibleUpdateAlert = visibleCustomAlertUpdated,
-                contact = contacts[selectedContactIndex.value],
-                indexOf = selectedContactIndex,
+            // Display contacts or a message if the list is empty
+            Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
+
+                if (contacts.isEmpty()) {
+                    Text("please click + to add new Contact ", Modifier.padding(32.dp), fontWeight = FontWeight.Bold)
+                } else {
+                    contacts.forEachIndexed { index, contact ->
+                        DisplayContactOnScreen(contact = contact) {
+                            // Show update alert when a contact is clicked
+                            visibleCustomAlertUpdated.value = true
+                            selectedContactIndex.value = index
+                        }
+                    }
+                }
+            }
+
+
+
+            // CustomAlert for adding a new contact
+            CustomAlert(
+                visibleCustomAlert,
                 contacts = contacts,
-                modifier = Modifier.align(Alignment.Center)
+                modifier = Modifier.align(Alignment.Center),
+                onCancel = { visibleCustomAlert.value = false; }
             )
-        }
 
+            if (visibleCustomAlertUpdated.value) {
+                UpdateCustomAlert(
+                    visibleUpdateAlert = visibleCustomAlertUpdated,
+                    contact = contacts[selectedContactIndex.value],
+                    indexOf = selectedContactIndex,
+                    contacts = contacts,
+                    modifier = Modifier.align(Alignment.Center),
+                )
+            }
+
+
+
+        }
     }
+
+
 }
+
+
+
+
 
 
 
